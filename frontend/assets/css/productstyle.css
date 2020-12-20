@@ -1,0 +1,27 @@
+.item_body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 7fr;
+}
+
+.item_img {
+    grid-column: 1;
+    grid-row: 1 / 5;
+}
+
+.item_description {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.item_price {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+.item_tocart {
+    grid-column: 2;
+    grid-row: 3;
+
+    background-color: orange;
+}

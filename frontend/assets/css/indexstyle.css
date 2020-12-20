@@ -1,0 +1,28 @@
+#products {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;;
+}
+
+.item_img {
+    width: 200px;
+}
+
+.item_title {
+    color: orange;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.item_link {
+    text-decoration: non1e;
+}
+
+.item_price_normal {
+    color: red;
+    text-decoration: line-through;
+}
+
+.item_price_special {
+    color: green;
+}
