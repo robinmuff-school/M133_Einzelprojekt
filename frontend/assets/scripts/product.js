@@ -32,6 +32,17 @@ function displayProduct() {
         }));
 }
 
-function addtocart() {
-    
+async function addtocart() {
+    let link = window.location.href;
+    let id = link.substr(link.length - 3, 3);
+
+    await fetch(
+        "/api/shoppingcart/" + id,
+        {
+            body: "",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: "POST"
+    });
 }
