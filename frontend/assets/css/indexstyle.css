@@ -1,11 +1,16 @@
 #products {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;;
+    grid-template-rows: 1fr 1fr 1fr;
+}
+
+.item {
+    text-align: center;
 }
 
 .item_img {
     width: 200px;
+    align-content: center;
 }
 
 .item_title {
@@ -15,14 +20,5 @@
 }
 
 .item_link {
-    text-decoration: non1e;
-}
-
-.item_price_normal {
-    color: red;
-    text-decoration: line-through;
-}
-
-.item_price_special {
-    color: green;
+    text-decoration: none;
 }

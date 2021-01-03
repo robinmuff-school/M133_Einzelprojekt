@@ -1,8 +1,7 @@
-const content = document.getElementById("product");
-
 displayProduct();
 
 function displayProduct() {
+    const content = document.getElementById("product");
     let link = window.location.href;
 
     fetch("/api/products")
@@ -14,17 +13,19 @@ function displayProduct() {
 
                 let html = 
                 `<div class="item">
-                        <div class="item_title">
-                            <h1 class="title">${product.productName}</h1>
-                        </div>
                         <div class="item_body">
-                            <img class="item_img" src="/assets/images/${product.imageName}">
-                            <p class="item_description">${product.description}</p>
-                            <div class="item_price">
-                                <p class="item_price_normal">${price} CHF</p>
-                                <p class="item_price_special">${specialPrice} CHF</p>
+                            <a class="item_img">
+                                <img class="item_img" src="/assets/images/${product.imageName}">
+                            </a>
+                            <div class="item_desc">
+                                <h1>${product.productName}</h1>
+                                <p>${product.description}</p>
+                                <div>
+                                    <p class="item_price_normal">CHF ${price}</p>
+                                    <p class="item_price_special">CHF ${specialPrice}</p>
+                                </div>
+                                <input class="item_tocart" type="button" onclick="addtocart()" value="In Warenkorb legen" />
                             </div>
-                            <input class="item_tocart" type="button" onclick="addtocart()" value="In Warenkorb legen" />
                         </div>
                 </div>`;
                 content.innerHTML += html;
@@ -45,4 +46,6 @@ async function addtocart() {
             },
             method: "POST"
     });
+
+    createhead();
 }

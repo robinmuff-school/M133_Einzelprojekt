@@ -1,27 +1,22 @@
 .item_body {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 7fr;
+    grid-template-columns: 5fr 1fr 5fr;
 }
 
 .item_img {
     grid-column: 1;
-    grid-row: 1 / 5;
+    height: 600px;
 }
 
-.item_description {
-    grid-column: 2;
-    grid-row: 1;
-}
-
-.item_price {
-    grid-column: 2;
-    grid-row: 2;
+.item_desc {
+    grid-column: 3;
 }
 
 .item_tocart {
-    grid-column: 2;
-    grid-row: 3;
-
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    margin: 5px;
+    font-size: 20px;
     background-color: orange;
 }

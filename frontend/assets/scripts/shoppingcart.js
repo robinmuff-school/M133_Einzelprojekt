@@ -1,5 +1,6 @@
 const content = document.getElementById("cart");
 let localcart = [];
+let localcart_ammount = [];
 
 loadPage();
 
@@ -16,27 +17,33 @@ async function loadPage() {
         if (usercart != undefined) {
             isitemincart = true;
         }
+        if (usercart.length == 0) {
+            isitemincart = false;
+        }
     } catch {};
     if (isitemincart) {   
         let table = "<table id=\"cart_table\" class=\"table\"><tbody id=\"cart_table_body\"><tr><th>Produkt</th><th>Einzelpreis</th><th>Anzahl</th><th>Total</th></tr></tbody></table>";
         document.getElementById("cart").innerHTML += table;
 
-        for (let uitemindex = 0; uitemindex < usercart.length; uitemindex++) {
-            isset = false;
-            for (let litemindex = 0; litemindex < localcart.length; litemindex+=2) {
-                if (usercart[uitemindex] == localcart[litemindex]) {
-                    localcart[litemindex + 1] = localcart[litemindex + 1] + 1;
+        localcart = [];
+        localcart_ammount = [];
+        for (let i = 0; i < usercart.length; i++) {
+            let isset = false;
+            for (let y = 0;y < localcart.length; y++) {
+                if (usercart[i] == localcart[y]) {
+                    localcart_ammount[y]++;
                     isset = true;
                 }
             }
-            if (!isset) {
-                localcart.push(usercart[uitemindex]);
-                localcart.push(1);
+            if(!isset) {
+                localcart.push(usercart[i]);
+                localcart_ammount.push(1);
             }
         }
 
         let html = "";
-        for (let i = 0; i < localcart.length; i+=2) {
+        let totalprice = 0;
+        for (let i = 0; i < localcart.length; i++) {
             let item;
             products.forEach(element => {
                 if (element.id == localcart[i]) {
@@ -46,11 +53,13 @@ async function loadPage() {
     
             let title = item.productName;
             let price = item.specialOffer.toFixed(2);
-            let amount = localcart[i + 1];
+            let amount = localcart_ammount[i];
             let total = (price * amount).toFixed(2);
+            totalprice = totalprice + (price * amount);
     
-            html += "<tr><td>"+title+"</td><td>"+price+"</td><td><button onclick=\"oneless("+i+")\">-</button><a> "+amount+" </a><button onclick=\"onemore("+i+")\">+</button></td><td>"+total+"</td></tr>";
+            html += "<tr><td>"+title+"</td><td>CHF "+price+"</td><td><button onclick=\"oneless("+i+")\">-</button><a> "+amount+" </a><button onclick=\"onemore("+i+")\">+</button></td><td>CHF "+total+"</td></tr>";
         }
+        html += "<tr><td></td><td></td><td></td><td>CHF "+totalprice.toFixed(2)+"</td></tr>";
 
         document.getElementById("cart_table_body").innerHTML += html;
     } else {
@@ -60,25 +69,49 @@ async function loadPage() {
 }
 
 async function onemore(id) {
-    console.log(id)
-    console.log(localcart[id + 1]);
-    localcart[id + 1] = localcart[id + 1] + 1;
+    localcart_ammount[id]++;
+    let newarr = [];
 
-    console.log(JSON.stringify(localcart))
+    for (let i = 0; i < localcart.length; i++) {
+        for (let y = 0; y < localcart_ammount[i]; y++) {
+            newarr.push(localcart[i]);
+        }
+    }
 
     await fetch(
         "/api/shoppingcart",
         {
-            body: JSON.stringify(localcart),
+            body: JSON.stringify(newarr),
             headers: {
                 'Content-Type': 'application/json'
             },
             method: "POST"
     });
 
-    //loadPage();
+    loadPage();
+    createhead();
 }
 
-async function oneless(button) {
+async function oneless(id) {
+    localcart_ammount[id]--;
+    let newarr = [];
 
+    for (let i = 0; i < localcart.length; i++) {
+        for (let y = 0; y < localcart_ammount[i]; y++) {
+            newarr.push(localcart[i]);
+        }
+    }
+
+    await fetch(
+        "/api/shoppingcart",
+        {
+            body: JSON.stringify(newarr),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: "POST"
+    });
+
+    loadPage();
+    createhead();
 }

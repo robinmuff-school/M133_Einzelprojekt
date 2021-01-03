@@ -1,0 +1,31 @@
+.header {
+    text-align: center;
+    color: orange;
+    grid-column: 2;
+}
+
+#header {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+}
+
+.cart {
+    text-align: center;
+    display: flex; 
+    justify-content: center; 
+    align-items: center
+}
+
+.cart_img {
+    width: 50px;
+}
+
+.item_price_normal {
+    color: red;
+    text-decoration: line-through;
+}
+
+.item_price_special {
+    color: green;
+    font-weight: bold;
+}

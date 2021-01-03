@@ -18,6 +18,9 @@ router
     .get("/shoppingcart", (context) => {
         return send(context, "/frontend/html/shoppingcart.html");
     })
+    .get("/checkout", (context) => {
+        return send(context, "frontend/html/checkout.html");
+    })
 
     //CSS OR JS
     .get("/assets/:folder/:file", (context) => {
@@ -48,7 +51,6 @@ router
     })
     .post("/api/shoppingcart", async (context) => {
         let cart = await context.request.body({ type: "json" }).value;
-        console.log(cart)
         await context.state.session.set("shoppingcart", cart);
 
         context.response.status = 200
@@ -63,6 +65,27 @@ router
             context.response.body = cart;
         }
         context.response.status = 200;
+    })
+    .get("/api/shoppingcart/totalprice", async (context) => {
+        const products_file = await Deno.readTextFile("frontend/assets/products.json");
+        let products = JSON.parse(products_file);
+        let cart = await context.state.session.get("shoppingcart");
+        if (cart == undefined) {
+            cart = [];
+        }
+
+        let totalprice = 0;
+        for (let i = 0; i < cart.length; i++) {
+            let item;
+            products.forEach(element => {
+                if (element.id == cart[i]) {
+                    item = element;
+                }
+            });
+            totalprice = totalprice + item.specialOffer;
+        }
+
+        context.response.body = totalprice;
     })
 
 app.use(session.use()(session));
