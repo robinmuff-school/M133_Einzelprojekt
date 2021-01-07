@@ -1,3 +1,5 @@
+/*
+
 displayProduct();
 
 function displayProduct() {
@@ -18,7 +20,7 @@ function displayProduct() {
                                 <img class="item_img" src="/assets/images/${product.imageName}">
                             </a>
                             <div class="item_desc">
-                                <h1>${product.productName}</h1>
+                                <h2>${product.productName}</h2>
                                 <p>${product.description}</p>
                                 <div>
                                     <p class="item_price_normal">CHF ${price}</p>
@@ -49,3 +51,5 @@ async function addtocart() {
 
     createhead();
 }
+
+*/

@@ -1,3 +1,5 @@
+/* 
+
 const content = document.getElementById("cart");
 let localcart = [];
 let localcart_ammount = [];
@@ -60,6 +62,7 @@ async function loadPage() {
             html += "<tr><td>"+title+"</td><td>CHF "+price+"</td><td><button onclick=\"oneless("+i+")\">-</button><a> "+amount+" </a><button onclick=\"onemore("+i+")\">+</button></td><td>CHF "+total+"</td></tr>";
         }
         html += "<tr><td></td><td></td><td></td><td>CHF "+totalprice.toFixed(2)+"</td></tr>";
+        html += "<tr><td></td><td></td><td></td><td><a href=\"/checkout\"><button>Bestellung abschliessen</button><a></td></tr>";
 
         document.getElementById("cart_table_body").innerHTML += html;
     } else {
@@ -115,3 +118,5 @@ async function oneless(id) {
     loadPage();
     createhead();
 }
+
+*/

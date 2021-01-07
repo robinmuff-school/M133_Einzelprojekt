@@ -1,3 +1,5 @@
+/*
+
 const body = document.getElementById("products");
 
 fetch("/api/products")
@@ -20,3 +22,5 @@ fetch("/api/products")
         </div>
         `
     }));
+
+*/

@@ -1,3 +1,5 @@
+/*
+
 createhead();
 
 async function createhead() {
@@ -26,3 +28,5 @@ async function createhead() {
     `;
     header.innerHTML = htmlheader;
 }
+
+*/
