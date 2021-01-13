@@ -1,9 +1,4 @@
-.table {
-    width: 100%;
-    text-align: center;
-}
-
-button{
+.return{
 	border: none;
 	padding: 8px 15px 8px 15px;
 	background: #FF8500;
@@ -15,14 +10,16 @@ button{
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 }
-button:hover{
+.return:hover{
 	background: #EA7B00;
     color: #fff;
     cursor: pointer;
 }
 
-.empty {
-	text-align: center;
-	color: #EA7B00;
-	font-size: large;
+.header {
+    color: orange;
+}
+
+#main {
+    text-align: center;
 }

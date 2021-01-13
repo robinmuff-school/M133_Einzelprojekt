@@ -24,19 +24,23 @@ export class Product{
 }
 
 export class ShoppingCart{
-  allProducts: Product[];
+    products: Product[]
 
-  constructor() {
-    this.allProducts = new Array<Product>();
-  }
+    constructor() {
+      this.products = new Array();
+    }
 
-  getTotalPrice(): number {
-    let price = 0;
-
-    this.allProducts.forEach(product => {
-      price += product.specialOffer || product.normalPrice;
-    });
-
-    return price;
-  }
+    public getTotalPrice(): number {
+      let price:number = 0.00;
+  
+      this.products.forEach(product => {
+        if (product.specialOffer == 0 || product.specialOffer == undefined || product.specialOffer == null) {
+          price += product.normalPrice
+        } else {
+          price += product.specialOffer
+        }
+      });
+  
+      return price;
+    }
 }
