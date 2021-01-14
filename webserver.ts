@@ -124,10 +124,10 @@ router
             context.response.redirect("/unsuccessfullorder");
         }
 
+        context.cookies.delete("sid");
+
         context.response.status = 200;
         context.response.redirect("/successfullorder");
-
-        context.cookies.delete("sid");
     })
     .get("/api/totalprice", async (context) => {
         if (await context.state.session.get("shoppingcart") == undefined) {
