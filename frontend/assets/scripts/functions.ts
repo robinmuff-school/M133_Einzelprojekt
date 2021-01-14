@@ -1,9 +1,14 @@
 /// <reference lib="dom" />
 import { localcart, localcart_ammount, loadPage } from "./main.ts"
 
-export async function addtocart() {
-    let link = window.location.href;
-    let id = link.substr(link.length - 3, 3);
+export async function addtocart(pi_id?:string) {
+    let id;
+    if (pi_id == null) {
+        let link = window.location.href;
+        id = link.substr(link.length - 3, 3);
+    } else {
+        id = pi_id;
+    }
 
     await fetch(
         "/api/shoppingcart/add/" + id,

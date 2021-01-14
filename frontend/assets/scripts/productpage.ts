@@ -38,13 +38,15 @@ export async function loadProductpage() {
                                 <h2>${element.productName}</h2>
                                 <p>${element.description}</p>
                                 ${pricehtml}
-                                <input id="addtocart" class="item_tocart" type="button" value="In Warenkorb legen" />
+                                <button id="addtocart" class="item_tocart">In Warenkorb legen</button>
                             </div>
                         </div>
                 </div>`;
                 content.innerHTML = html;
 
-                document.getElementById("addtocart").addEventListener("click", addtocart);
+                document.getElementById("addtocart").addEventListener("click", async () => {
+                    addtocart();
+                });
             }
         })
 }

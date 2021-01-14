@@ -8,6 +8,7 @@ export async function loadStartpage() {
 
     addStyleSheet('/assets/css/indexstyle.css');
 
+        let count = 0;
         products.forEach(element => {
             let pricehtml;
             
@@ -33,7 +34,24 @@ export async function loadStartpage() {
                         <p class="item_title">${element.productName}</p>
                         ${pricehtml}
                     </a>
+                    <button id="addtocart_${count.toString()}">In Warenkorb legen</button>
                 </div>
                 `
+            count++;
         });
+
+        for (let i = 0; i < count; i++) {
+            let btnname = "addtocart_" + i.toString();
+            await document.getElementById(btnname).addEventListener("click", async () => {
+                let id = i + 1;
+                let string:string;
+                if (id < 10) {
+                    string = "00" + id.toString();
+                }
+                if (id > 9 && i < 100) {
+                    string = "0" + id.toString();
+                }                
+                addtocart(string);
+            });
+        }
 }
