@@ -6,6 +6,7 @@
 button{
 	border: none;
 	padding: 8px 15px 8px 15px;
+	margin: 2px;
 	background: #FF8500;
 	color: #fff;
 	box-shadow: 1px 1px 4px #DADADA;

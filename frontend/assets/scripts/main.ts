@@ -86,6 +86,7 @@ export async function loadPage() {
             }
         })
     }
+
     if (window.location.pathname == "/shoppingcart") {
         addStyleSheet("/assets/css/shoppingcartstyle.css")
         let usercart:ShoppingCart = await (await fetch("/api/shoppingcart")).json();
@@ -132,7 +133,7 @@ export async function loadPage() {
                 });
         
                 let title = item.productName;
-                let price = item.specialOffer|item.normalPrice;
+                let price = item.specialOffer||item.normalPrice;
                 let amount = localcart_ammount[i];
                 let total = (price * amount).toFixed(2);
                 totalprice = totalprice + (price * amount);

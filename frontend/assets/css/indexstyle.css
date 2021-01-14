@@ -1,11 +1,13 @@
 #main {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+    justify-content: center;
 }
 
 .item {
     text-align: center;
+    margin: 60px
 }
 
 .item_img {
