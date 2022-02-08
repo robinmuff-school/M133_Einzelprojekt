@@ -1,8 +1,10 @@
-import { ensureDirSync } from "https://deno.land/std@0.82.0/fs/mod.ts";
+import { ensureDirSync } from "https://deno.land/std@0.125.0/fs/mod.ts";
 
-const [diagnostics, emit] = await Deno.bundle(
+/*const [diagnostics, emit] = await Deno.compile(
     "./frontend/app.ts",
-);
+);*/
+const emit = await Deno.emit("./frontend/app.ts", {bundle: "module"});
 
 ensureDirSync("./frontend/build");
-await Deno.writeTextFile("./frontend/build/app.js", emit);
+//console.log(emit)
+await Deno.writeTextFile("./frontend/build/app.js", emit.files["deno:///bundle.js"]);

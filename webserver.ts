@@ -1,110 +1,92 @@
-import { Application, Context, Router, send } from "https://deno.land/x/oak@v6.4.0/mod.ts";
-import { Session } from "https://deno.land/x/session@1.1.0/mod.ts";
+import { Application, Context, Router, send } from "https://deno.land/x/oak/mod.ts";
 import { Product, ShoppingCart } from "./classes/types.ts";
 
 const app = new Application();
 const router = new Router();
 
-const session = new Session({ framework: "oak" });
-await session.init();
-
 const products:Product[] = JSON.parse(await Deno.readTextFile(`frontend/assets/products.json`));
 
 router 
     //HTML
-    .get("/", async (context) => {
-        await send(context, "/frontend/html/index.html");
+    .get("/", async (ctx, next) => {
+        await send(ctx, "/frontend/html/index.html");
     })
-    .get("/product/:id", async (context) => {
-        await send(context, "/frontend/html/index.html");
+    .get("/product/:id", async (ctx, next) => {
+        await send(ctx, "/frontend/html/index.html");
     })
-    .get("/shoppingcart", async (context) => {
-        await send(context, "/frontend/html/index.html");
+    .get("/shoppingcart", async (ctx, next) => {
+        await send(ctx, "/frontend/html/index.html");
     })
-    .get("/checkout", async (context) => {
-        if (await context.state.session.get("shoppingcart") == undefined) {
-            await context.state.session.set("shoppingcart", new ShoppingCart());
-        }
-        let cart:ShoppingCart = await context.state.session.get("shoppingcart");
+    .get("/checkout", async (ctx, next) => {
+        let cart:ShoppingCart = await getShoppingCart(ctx);
         
         if (cart.products.length == 0) {
-            context.response.redirect("/shoppingcart");
+            ctx.response.redirect("/shoppingcart");
         }
-        await send(context, "frontend/html/index.html");
+        await send(ctx, "frontend/html/index.html");
     })
-    .get("/successfullorder", async (context) => {
-        await send(context, "frontend/html/index.html");
+    .get("/successfullorder", async (ctx, next) => {
+        await send(ctx, "frontend/html/index.html");
     })
-    .get("/unsuccessfullorder", async (context) => {
-        await send(context, "frontend/html/index.html");
+    .get("/unsuccessfullorder", async (ctx, next) => {
+        await send(ctx, "frontend/html/index.html");
     })
 
     //Assets
-    .get("/assets/:folder/:file", async (context) => {
-        await send(context, "/frontend/assets/" + context.params.folder + "/" + context.params.file);
+    .get("/assets/:folder/:file", async (ctx, next) => {
+        await send(ctx, "/frontend/assets/" + ctx.params.folder + "/" + ctx.params.file);
     })
-    .get("/jsassets/:folder/:file", async (context) => {
-        await send(context, "/frontend/" + context.params.folder + "/" + context.params.file); 
+    .get("/jsassets/:folder/:file", async (ctx, next) => {
+        await send(ctx, "/frontend/" + ctx.params.folder + "/" + ctx.params.file); 
     })
 
     //API
-    .get("/api/products", async (context) => {
-        context.response.body = products;
+    .get("/api/products", async (ctx, next) => {
+        ctx.response.body = products;
     })
-    .post("/api/shoppingcart", async (context) => {
-        let cart:ShoppingCart = await context.request.body({ type: "json" }).value;
-        await context.state.session.set("shoppingcart", cart);
+    .post("/api/shoppingcart", async (ctx, next) => {
+        let cart:ShoppingCart = await ctx.request.body({ type: "json" }).value;
+        setShoppingCart(ctx, cart);
 
-        context.response.status = 200
-        context.response.body = { message: 'OK' }
+        ctx.response.status = 200
+        ctx.response.body = { message: 'OK' }
     })
-    .get("/api/shoppingcart", async (context) => {
-        if (await context.state.session.get("shoppingcart") == undefined) {
-            await context.state.session.set("shoppingcart", new ShoppingCart());
-        }
+    .get("/api/shoppingcart", async (ctx, next) => {
+        ctx.response.body = await getShoppingCart(ctx);
 
-        context.response.body = await context.state.session.get("shoppingcart");
-
-        context.response.status = 200;
+        ctx.response.status = 200;
     })
-    .post("/api/shoppingcart/add/:id", async (context) => {
-        if (await context.state.session.get("shoppingcart") == undefined) {
-            await context.state.session.set("shoppingcart", new ShoppingCart());
-        }
-        let shoppingcart:ShoppingCart = await context.state.session.get("shoppingcart");
-        const product = products.find(x => Number(x.id) === Number(context.params.id));
+    .post("/api/shoppingcart/add/:id", async (ctx, next) => {
+        let shoppingcart:ShoppingCart = await getShoppingCart(ctx);
+        const product = products.find(x => Number(x.id) === Number(ctx.params.id));
         if (!product) {
-            context.response.status = 404;
+            ctx.response.status = 404;
             return;
         }
         shoppingcart.products.push(product);
-        context.response.status = 200;
-        })
-    .post("/api/shoppingcart/remove/:id", async (context) => {
-        if (await context.state.session.get("shoppingcart") == undefined) {
-            await context.state.session.set("shoppingcart", new ShoppingCart());
-        }                
-        let shoppingcart:ShoppingCart = await context.state.session.get("shoppingcart");
-        const product = products.find(x => Number(x.id) === Number(context.params.id));
+        await setShoppingCart(ctx, shoppingcart);
+        ctx.response.status = 200;
+    })
+    .post("/api/shoppingcart/remove/:id", async (ctx, next) => {
+        let shoppingcart:ShoppingCart = await getShoppingCart(ctx);
+        const product = products.find(x => Number(x.id) === Number(ctx.params.id));
         if (!product) {
-            context.response.status = 404;
+            ctx.response.status = 404;
             return;
         }
         let index = shoppingcart.products.indexOf(product);
-        shoppingcart.products.splice(index, 1);        
-        context.response.status = 200;
+        shoppingcart.products.splice(index, 1);
+        await setShoppingCart(ctx, shoppingcart);
+        ctx.response.status = 200;
     })
-    .post("/api/order", async (context) => {
-        if (await context.state.session.get("shoppingcart") == undefined) {
-            await context.state.session.set("shoppingcart", new ShoppingCart());
-        }
-        let cart:ShoppingCart = await context.state.session.get("shoppingcart");
+    .post("/api/order", async (ctx, next) => {
+        let cart:ShoppingCart = await getShoppingCart(ctx);
         
         if (cart.products.length == 0) {
-            context.response.redirect("/shoppingcart");
+            ctx.response.redirect("/shoppingcart");
         }
 
-        const body = await context.request.body({ type: "form"})
+        const body = await ctx.request.body({ type: "form"})
         const values = await body.value;
 
         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -120,25 +102,40 @@ router
         }
 
         if (isinvalid) {
-            context.response.status = 200;
-            context.response.redirect("/unsuccessfullorder");
+            ctx.response.status = 200;
+            ctx.response.redirect("/unsuccessfullorder");
         }
 
-        context.cookies.delete("sid");
+        setShoppingCart(ctx, new ShoppingCart());
 
-        context.response.status = 200;
-        context.response.redirect("/successfullorder");
+        ctx.response.status = 200;
+        ctx.response.redirect("/successfullorder");
     })
-    .get("/api/totalprice", async (context) => {
-        if (await context.state.session.get("shoppingcart") == undefined) {
-            await context.state.session.set("shoppingcart", new ShoppingCart());
-        }
+    .get("/api/totalprice", async (ctx, next) => {
+        let shoppingcart:ShoppingCart = await getShoppingCart(ctx);
 
-        let shoppingcart:ShoppingCart = await context.state.session.get("shoppingcart");
-        context.response.body = shoppingcart.getTotalPrice();
+        let price:number = 0.00;
+  
+        shoppingcart.products.forEach(product => {
+          if (product.specialOffer == 0 || product.specialOffer == undefined || product.specialOffer == null) {
+            price += product.normalPrice
+          } else {
+            price += product.specialOffer
+          }
+        });
+    
+        ctx.response.body = price;
     })
 
-app.use(<any>session.use()(session));
+async function getShoppingCart(ctx:any) {
+    if (ctx.cookies.get("shoppingcart") == undefined) { ctx.cookies.set("shoppingcart", JSON.stringify(new ShoppingCart())); }
+    return await JSON.parse(await ctx.cookies.get("shoppingcart"));
+}
+async function setShoppingCart(ctx:any, ShoppingCart:ShoppingCart) {
+    await ctx.cookies.set("shoppingcart", JSON.stringify(ShoppingCart));
+}
+
+
 app.use(router.routes());
 app.listen({ port: 8000 });
 console.log("Server running on http://localhost:8000");
