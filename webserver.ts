@@ -113,6 +113,7 @@ router
     })
     .get("/api/totalprice", async (ctx, next) => {
         let shoppingcart:ShoppingCart = await getShoppingCart(ctx);
+        await ctx.cookies.set("shoppingcartt", "T")
 
         let price:number = 0.00;
   
@@ -128,7 +129,10 @@ router
     })
 
 async function getShoppingCart(ctx:any) {
-    if (ctx.cookies.get("shoppingcart") == undefined) { ctx.cookies.set("shoppingcart", JSON.stringify(new ShoppingCart())); }
+    if (await ctx.cookies.get("shoppingcart") == undefined) { 
+        return new ShoppingCart();
+    }
+
     return await JSON.parse(await ctx.cookies.get("shoppingcart"));
 }
 async function setShoppingCart(ctx:any, ShoppingCart:ShoppingCart) {
