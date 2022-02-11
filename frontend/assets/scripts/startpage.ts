@@ -5,6 +5,7 @@ import { addtocart, addStyleSheet, onemore, oneless } from "./functions.ts"
 export async function loadStartpage() {
     let products:Product[] = await (await fetch("/api/products")).json()
     const content:Element = document.getElementById("main");
+    content.innerHTML = "";
 
     addStyleSheet('/assets/css/indexstyle.css');
 
